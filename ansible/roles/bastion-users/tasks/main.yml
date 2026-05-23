@@ -1,0 +1,18 @@
+---
+- name: Ensure bastion users exist
+  ansible.builtin.user:
+    name: "{{ item.username }}"
+    groups: "{{ item.groups | default([]) }}"
+    append: true
+    shell: /bin/bash
+    create_home: true
+    state: present
+  loop: "{{ bastion_users }}"
+
+- name: Install bastion user authorized keys
+  ansible.posix.authorized_key:
+    user: "{{ item.username }}"
+    state: present
+    key: "{{ item.ssh_public_key }}"
+  loop: "{{ bastion_users }}"
+  when: item.ssh_public_key is defined

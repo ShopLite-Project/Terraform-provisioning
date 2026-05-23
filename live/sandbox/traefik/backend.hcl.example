@@ -1,0 +1,5 @@
+bucket         = "shoplite-sandbox-tf-state"
+key            = "shoplite/traefik/terraform.tfstate"
+region         = "us-east-1"
+dynamodb_table = "shoplite-sandbox-tf-lock"
+encrypt        = true

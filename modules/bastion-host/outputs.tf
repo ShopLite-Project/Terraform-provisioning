@@ -1,0 +1,19 @@
+output "instance_id" {
+  description = "Bastion instance ID."
+  value       = aws_instance.bastion.id
+}
+
+output "private_ip" {
+  description = "Bastion private IP address."
+  value       = aws_instance.bastion.private_ip
+}
+
+output "public_ip" {
+  description = "Bastion public IP address."
+  value       = aws_instance.bastion.public_ip
+}
+
+output "security_group_id" {
+  description = "Bastion security group ID."
+  value       = aws_security_group.bastion.id
+}

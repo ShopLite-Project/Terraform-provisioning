@@ -1,0 +1,6 @@
+---
+- name: Bootstrap bastion users
+  hosts: bastion
+  become: true
+  roles:
+    - role: bastion-users

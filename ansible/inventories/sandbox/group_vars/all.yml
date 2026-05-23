@@ -1,0 +1,5 @@
+---
+aws_region: us-east-1
+cluster_name: shoplite-sandbox-eks
+bastion_users: []
+kubeconfig_users: []

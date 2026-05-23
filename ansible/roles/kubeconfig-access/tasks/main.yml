@@ -1,0 +1,11 @@
+---
+- name: Write kubeconfig helper file for approved users
+  ansible.builtin.copy:
+    dest: "/home/{{ item.username }}/kubeconfig-access.txt"
+    owner: "{{ item.username }}"
+    group: "{{ item.username }}"
+    mode: "0644"
+    content: |
+      Run this command to configure kubectl access for the EKS cluster:
+      aws eks update-kubeconfig --region {{ aws_region }} --name {{ cluster_name }}
+  loop: "{{ kubeconfig_users }}"

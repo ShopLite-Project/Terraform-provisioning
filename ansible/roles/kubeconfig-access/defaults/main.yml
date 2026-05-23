@@ -1,0 +1,4 @@
+---
+cluster_name: shoplite-sandbox-eks
+aws_region: us-east-1
+kubeconfig_users: []
