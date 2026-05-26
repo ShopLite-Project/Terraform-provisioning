@@ -1,0 +1,98 @@
+stage:
+  project_name: shoplite
+  tags:
+    Environment: stage
+    Project: shoplite
+    ManagedBy: terraform
+
+  s3_backend:
+    bucket_name: shoplite-stage-tf-state
+    dynamodb_table_name: shoplite-stage-tf-lock
+    key_prefix: shoplite
+    force_destroy: false
+
+  vpc_core_network:
+    cidr_block: 10.60.0.0/16
+    enable_dns_support: true
+    enable_dns_hostnames: true
+    availability_zones:
+      - us-east-1a
+      - us-east-1b
+    cluster_name: shoplite-stage-eks
+    open_inbound_acl_rules:
+      - rule_number: 100
+        rule_action: allow
+        protocol: "-1"
+        cidr_block: 0.0.0.0/0
+    open_outbound_acl_rules:
+      - rule_number: 100
+        rule_action: allow
+        protocol: "-1"
+        cidr_block: 0.0.0.0/0
+
+  bastion_host:
+    instance_name: shoplite-stage-bastion
+    instance_type: t3.micro
+    root_volume_size: 20
+    key_name: null
+    create_on_public_subnet: true
+    enable_termination_protection: false
+    allowed_ssh_cidrs:
+      - 0.0.0.0/0
+
+  eks_cluster:
+    cluster_name: shoplite-stage-eks
+    kubernetes_version: "1.30"
+    endpoint_private_access: true
+    endpoint_public_access: true
+    instance_types:
+      - t3.medium
+    desired_size: 2
+    min_size: 2
+    max_size: 3
+    disk_size: 20
+    capacity_type: ON_DEMAND
+    ami_type: AL2023_x86_64_STANDARD
+    enabled_cluster_log_types:
+      - api
+      - audit
+      - authenticator
+
+  cert_manager:
+    namespace: cert-manager
+    chart_version: v1.18.2
+    cluster_issuer_name: letsencrypt-prod
+    acme_email: platform@shoplite.local
+    acme_server: https://acme-v02.api.letsencrypt.org/directory
+    http01_ingress_class: traefik
+    enable_prometheus: false
+
+  traefik:
+    namespace: traefik
+    chart_version: 34.3.0
+    ingress_class_name: traefik
+    replicas: 2
+    service_type: LoadBalancer
+    is_default_ingress_class: true
+    dashboard_enabled: false
+
+  external_dns:
+    namespace: external-dns
+    chart_version: 1.15.0
+    policy: sync
+    txt_owner_id: shoplite-stage
+    service_account_name: external-dns
+    hosted_zone_name: stage.shoplite.local
+    domain_filters:
+      - stage.shoplite.local
+    sources:
+      - service
+      - ingress
+    aws_zone_type: public
+
+  argocd:
+    namespace: argocd
+    chart_version: 7.8.2
+    hostname: argocd.stage.shoplite.local
+    ingress_class_name: traefik
+    cluster_issuer_name: letsencrypt-prod
